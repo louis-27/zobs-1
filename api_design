@@ -1,0 +1,16 @@
+GET / -> front/landing page
+
+GET /admin -> show dashboard
+
+POST /admin -> login popup (binus.edu/admin) (need auth)
+
+POST /jobpost -> admin add job posting
+
+DEL /jobpost/:id -> admin del job posting
+
+GET /results/:id  -> admin view filtered/ranked results
+
+GET /posting/:id -> talent open submission box
+
+POST /posting/:id -> post cv/resume
+
