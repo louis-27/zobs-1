@@ -2,8 +2,9 @@ from flask import request, make_response
 from functools import wraps
 import jwt
 import datetime
-from app import app
-from app.models import JobPosts
+import hashlib
+from app import app, db
+from app.models import JobPosts, JobPostsReqs, Talent
 
 def login_required(f):
     @wraps(f)
@@ -27,12 +28,15 @@ def login_required(f):
 def root():
     return 'hello world!'
 
-@app.route('/admin')
-def admin():
-    auth = request.authorization
-    if auth and auth.username == 'admin' and auth.password == 'admin':
+@app.route('/login', methods=['POST'])
+def login():
+    print(request)
+    username = request.form['username']
+    password = request.form['password']
+    # auth = request.authorization
+    if username and password and username == 'admin' and password == 'admin':
         token = jwt.encode({
-            'user': auth.username,
+            'user': username,
             'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=10)
         }, app.config['SECRET_KEY'])
         return {'token': token}
@@ -52,10 +56,40 @@ def dashboard():
         })
     return res
 
-@app.route('/jobpost')
+@app.route('/jobpost', methods=['GET', 'POST'])
 @login_required
 def jobpost():
-    pass
+    # handle post req
+    if request.method == 'POST':
+        data = request.get_json()
+
+        # add job post to db
+        new_jobpost = JobPosts(title=data['title'], uri=data['uri'], applicants=0)
+        db.session.add(new_jobpost)
+        db.session.commit()
+
+        # add requirements to db
+        requirements = data['requirements']
+        id = JobPosts.query.order_by(JobPosts.id.desc()).first().id
+        print('TYPE FUCK YOU', type(id))
+        for i in requirements:
+            new_jobpostreq = JobPostsReqs(job_post_id=id, skill=i)
+            db.session.add(new_jobpostreq)
+            db.session.commit()
+
+        return {'message': 'job post submitted'}
+    
+    # handle get request
+    response = {'job_posts': []}
+    for i in JobPosts.query.all():
+        response['job_posts'].append({
+            'title': i['title'],
+            'uri': i['uri'],
+            'tag': i['tag'],
+            'applicants': i['applicants']
+        })
+    return response
+    
 
 @app.route('/jobpost/<id>')
 @login_required
@@ -67,8 +101,22 @@ def jobpost_id(id):
 def results(id):
     pass
 
-@app.route('/talent/<id>')
+@app.route('/talent/<id>', methods=['POST'])
 @login_required
-def talent(id, methods=['GET', 'POST']):
-    pass
+def talent(id):
+    upload = request.files['upload']
+    filename = upload.filename
+    if filename != '':
+        if filename.split('.')[-1] not in app.config['VALID_FILE_EXT']:
+            return {'message': 'invalid file extension'}, 401
+        
+        print('FUCK', upload, type(upload))
+        # add to db and uploads dir
+        # hashed = hashlib.sha256(filename)
+        # upload.save(app.config['UPLOAD_PATH'] + '/' + filename)
+        # name = res_get_name(upload)
+
+        return {'message': 'file upload succesful'}
+
+    return {'message': 'file upload failed'}, 401
 
