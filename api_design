@@ -1,8 +1,12 @@
 GET / -> front/landing page
 
-GET /admin -> show dashboard
+/* GET /admin -> show dashboard */
+GET /admin -> now shows login popup, dashboard is moved to /dashboard
 
-POST /admin -> login popup (binus.edu/admin) (need auth)
+/* POST /admin -> login popup (binus.edu/admin) (need auth) */
+auth is handled with request.authorization. this is not needed anymore
+
+/dashboard -> show dashboard for admin
 
 POST /jobpost -> admin add job posting
 
@@ -10,7 +14,8 @@ DEL /jobpost/:id -> admin del job posting
 
 GET /results/:id  -> admin view filtered/ranked results
 
-GET /posting/:id -> talent open submission box
+// rename from posting to talent to be less ambiguous?? ¯\_(ツ)_/¯
+GET /talent/:id -> talent open submission box
 
-POST /posting/:id -> post cv/resume
+POST /talent/:id -> post cv/resume
 
