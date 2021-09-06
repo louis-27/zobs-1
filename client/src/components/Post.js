@@ -3,7 +3,7 @@ import { FaLink, FaTag, FaUser } from 'react-icons/fa'
 import { HiArrowNarrowRight } from 'react-icons/hi'
 import styled from 'styled-components'
 
-export function Post({ name, tag, applicants }) {
+export function Post({ name, tag, uri, applicants }) {
   const colors = {
     "Business": "#16A34A",
     "Design": "#EA580C",
@@ -17,7 +17,8 @@ export function Post({ name, tag, applicants }) {
     <Card type={ bgColor }>
       <h1>{ name }</h1>
       <div>
-        <FaLink /> <span className="underline">Copy URL Link</span>
+        <FaLink /> <span className="underline">{ uri }</span>
+        <a href={'/talent/' + uri}>click this link</a>
       </div>
       <div>
         <FaTag /> <span>{ tag }</span>
@@ -36,7 +37,7 @@ export function Post({ name, tag, applicants }) {
 const Card = styled.div`
   position: relative;
   color: white;
-  /* background-color: #0169FF; */
+  background-color: #0169FF;
   background-color: ${props => props.bgColor};
 
   /* width: 100%; */

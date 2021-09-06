@@ -10,6 +10,7 @@ import Header from '../components/Header'
 import { Logo } from '../components/Logo/Logo'
 import DashboardModal from '../components/DashboardModal'
 import { Post } from '../components/Post'
+import Talent from './Talent'
 
 function Dashboard() {
   const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('jwt-token') ? true : false)
@@ -21,10 +22,22 @@ function Dashboard() {
     requirements: [],
   })
 
-  // useEffect(() => {
-  //   const jwt = localStorage.getItem('jwt-token')
-  //   if (jwt) setIsLoggedIn(true)
-  // }, [])
+  useEffect(() => {
+    const jwt = localStorage.getItem('jwt-token')
+    console.log(jwt)
+    axios.get('/jobpost', {headers: {'x-access-token': jwt}})
+      .then(res => {
+        setJobPosts(res.data.job_posts)
+        console.log('should get data here', res.data)
+      })
+      .catch(err => {
+        console.log('unable to fetch data', err.response.data.message)
+      })
+  }, [])
+
+  useEffect(() => {
+    console.log(jobPosts)
+  }, [jobPosts])
 
   const Dashboard = (
     <Wrapper>
@@ -72,10 +85,12 @@ function Dashboard() {
         </div>
 
         <div className="dashboard__posts">
-            {testink.map(job => (
+            {jobPosts.map(job => (
               <Post 
-                name={job.name}
+                key={job.uri}
+                name={job.title}
                 tag={job.tag}
+                uri={job.uri}
                 applicants={job.applicants}
               />
             ))}

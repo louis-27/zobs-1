@@ -1,5 +1,6 @@
 server/venv/
 server/app/__pycache__/
 client/node_modules/
+uploads/*
 
 .DS_Store

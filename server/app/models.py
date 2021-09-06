@@ -18,3 +18,4 @@ class Talent(db.Model):
     phone = db.Column(db.Text)
     file_hash = db.Column(db.Text)
     job_post_id = db.Column(db.Integer, db.ForeignKey('job_posts.id'))
+

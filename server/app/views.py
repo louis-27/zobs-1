@@ -2,9 +2,12 @@ from flask import request, make_response
 from functools import wraps
 import jwt
 import datetime
-import hashlib
+import os
+
 from app import app, db
 from app.models import JobPosts, JobPostsReqs, Talent
+from app.get_details import get_details
+from app.utils import hash_file
 
 def login_required(f):
     @wraps(f)
@@ -37,7 +40,7 @@ def login():
     if username and password and username == 'admin' and password == 'admin':
         token = jwt.encode({
             'user': username,
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=10)
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=24)
         }, app.config['SECRET_KEY'])
         return {'token': token}
     return make_response('unauthorized access', 401,
@@ -78,23 +81,24 @@ def jobpost():
             db.session.commit()
 
         return {'message': 'job post submitted'}
-    
+
     # handle get request
     response = {'job_posts': []}
     for i in JobPosts.query.all():
         response['job_posts'].append({
-            'title': i['title'],
-            'uri': i['uri'],
-            'tag': i['tag'],
-            'applicants': i['applicants']
+            'title': i.title,
+            'uri': i.uri,
+            'tag': i.tag,
+            'applicants': i.applicants
         })
     return response
-    
 
-@app.route('/jobpost/<id>')
+@app.route('/jobpost/<id>', methods=['DEL'])
 @login_required
 def jobpost_id(id):
-    pass
+    job_post = JobPosts.query.filter_by(uri=id).delete()
+    db.session.commit()
+    return {'message': 'job post successfully deleted'}
 
 @app.route('/results/<id>')
 @login_required
@@ -109,12 +113,31 @@ def talent(id):
     if filename != '':
         if filename.split('.')[-1] not in app.config['VALID_FILE_EXT']:
             return {'message': 'invalid file extension'}, 401
-        
-        print('FUCK', upload, type(upload))
-        # add to db and uploads dir
-        # hashed = hashlib.sha256(filename)
-        # upload.save(app.config['UPLOAD_PATH'] + '/' + filename)
-        # name = res_get_name(upload)
+
+        # hash file and save file as ../UPLOAD_PATH/hash
+        hashed = hash_file(upload)
+        upload.seek(0) # move filepointer to start after read()
+        new_filename = os.path.join(app.config['UPLOAD_PATH'], hashed)
+        upload.save(new_filename)
+
+        job_post = JobPosts.query.filter_by(uri=id).first()
+        job_post_id = job_post.id
+
+        # increment applicants in database
+        job_post.applicants += 1
+        db.session.commit()
+
+        # add talent to db
+        details = get_details(new_filename)
+        new_talent = Talent(
+            name=details['name'],
+            email=details['email'],
+            phone=details['phone'],
+            file_hash=hashed,
+            job_post_id=job_post_id
+        )
+        db.session.add(new_talent)
+        db.session.commit()
 
         return {'message': 'file upload succesful'}
 

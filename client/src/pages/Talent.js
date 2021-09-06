@@ -1,9 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import ReactDom from 'react-dom'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import axios from 'axios'
-import { Upload, message } from 'antd';
+import { Form, Upload, message } from 'antd';
 import { InboxOutlined, CloseOutlined } from '@ant-design/icons';
 import Header from '../components/Header';
 
@@ -53,7 +53,7 @@ const TalentContainer = styled.div`
 `
 
 const OverlayContainer = styled.div`
-  width: 60%;
+  width: 80%;
   height: 80%;
   color: red;
   background-color: grey;
@@ -64,8 +64,8 @@ const OverlayContainer = styled.div`
 
   .input-box{
     margin: auto;
-    width: 90%;
-    height: 90%;
+    width: 60%;
+    height: 60%;
   }
 
   #close-overlay{
@@ -81,12 +81,29 @@ const OverlayContainer = styled.div`
 `
 
 function Talent({ match }) {
+  const [jobPosts, setJobPosts] = useState([])
+
+  useEffect(() => {
+    const jwt = localStorage.getItem('jwt-token')
+    axios.get('/jobpost', {headers: {'x-access-token': jwt}})
+      .then(res => {
+        console.log('should get data here', res.data)
+        setJobPosts(res.data.job_posts)
+      })
+      .catch(err => {
+        console.log('unable to fetch data', err)
+      })
+  }, [])
+
+  const isValidId = () => jobPosts.some(i => i.uri === match.params.id)
+
   const { Dragger } = Upload;
 
   const props = {
     name: 'file',
     multiple: false,
-    action: '/talent/:id',
+    // action: '/talent/:id',
+    customRequest: () => console.log('dummy'),
     onChange(info) {
       const { status } = info.file;
       if (status !== 'uploading') {
@@ -103,56 +120,57 @@ function Talent({ match }) {
     },
   };
 
-  // const [uploadedFile, setUploadedFile] = useState(null)
-  // const history = useHistory()
+  const handleSubmit = () => null
 
-  // const handleSubmit = e => {
-  //   e.preventDefault()
-  //   let body = new FormData()
-  //   body.append('upload', uploadedFile)
-  //   axios.post(`talent/${match.params.id}`)
-  //     .then(res => {
-  //       console.log('file submitted')
-  //       history.push(`talent/${match.params.id}`)
-  //     })
-  //     .catch(err => {
-  //       console.log('unable to post file', err)
-  //     })
-  // }
+  const talent = (
+    <TalentContainer>
+      <Header/>
+        <div id='talent-cont'>
+          <h1>YOU ARE CURRENTLY APPLYING FOR:</h1>
+          {/*<h2>{ jobPosts.find(i => i.uri === match.params.id) || 'wtf?' }</h2>*/}
 
-  return (
-    <>
-      <TalentContainer>
-        <Header/>
-          <div id='talent-cont'>
-            <h1>
-              YOU ARE CURRENTLY APPLYING FOR:
-            </h1>
-            <h2>
-              Back-End Engineer, At Google Indonesia
-            </h2>
-            {/* <form onSubmit={ handleSubmit }> */}
-              <SubmitTalent activator={ ({ setIsOpen }) => (
-                <button id='open-dragger'onClick={ () => setIsOpen(true) }>
-                  Upload CV
-                </button>
-              )}>
-                <div class='input-box'>
+            <SubmitTalent activator={ ({ setIsOpen }) => (
+              <button id='open-dragger'onClick={ () => setIsOpen(true) }>
+                Upload CV
+              </button>
+            )}>
+              <Form onFinish={ handleSubmit }>
+                <Form.Item name='file'>
                   <Dragger {...props}>
                     <p className="ant-upload-drag-icon">
                       <InboxOutlined />
                     </p>
                     <p className="ant-upload-text">Click or drag file to this area to upload</p>
                     <p className="ant-upload-hint">
-                      Support for a single or bulk upload. Strictly prohibit from uploading company data or other
-                      band files
+                      Support for a single or bulk upload. Strictly prohibit from
+                      uploading company data or other band files
                     </p>
                   </Dragger>
-                </div>
-              </SubmitTalent>
-            {/* </form> */}
-          </div>
-      </TalentContainer>
+                </Form.Item>
+              </Form>
+              {/*
+              <div className='input-box'>
+                <Dragger {...props}>
+                  <p className="ant-upload-drag-icon">
+                    <InboxOutlined />
+                  </p>
+                  <p className="ant-upload-text">Click or drag file to this area to upload</p>
+                  <p className="ant-upload-hint">
+                    Support for a single or bulk upload. Strictly prohibit from uploading company data or other
+                    band files
+                  </p>
+                </Dragger>
+              </div>
+              */}
+            </SubmitTalent>
+          {/* </form> */}
+        </div>
+    </TalentContainer>
+  )
+
+  return (
+    <>
+    {isValidId() ? talent : <>404 fuck you</>}
     </>
   )
 }

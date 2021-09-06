@@ -71,7 +71,7 @@ const FormContainer = styled.div`
 // kalo nak pake antd, banyak dah ada component2nya: https://ant.design/components/overview/
 
 // form, username and password, method post, '/login'
-function Login(props) {
+function Login() {
   const [formData, setFormData] = useState({username: '', password: ''})
   const history = useHistory()
 

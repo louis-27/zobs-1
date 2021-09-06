@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Route, BrowserRouter as Router, Switch } from 'react-router-dom'
+import axios from 'axios'
+
 import './App.css'
 import GlobalStyle from './styles/style'
 import Root from './pages/Root'
@@ -21,9 +23,9 @@ function App() {
       <Switch>
         <Route path="/" exact component={Root} />
         {/* <Route path="/login" exact component={Login} /> */}
-        <Route path="/login" exact render={props => <Login {...props} setJwtToken={setJwtToken}/>} />
+        <Route path="/login" exact component={Login} />
         <Route path="/dashboard" exact component={Dashboard} />
-        <Route path="/talent/:id" exact component={Talent} />
+        <Route path="/talent/:id" component={Talent} />
         {/* <Route path="/dashboard" render={(props) => {
           <Dashboard {...props} setAuthToken={setAuthToken}/>
         }} /> */}
