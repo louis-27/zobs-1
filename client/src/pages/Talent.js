@@ -86,7 +86,7 @@ function Talent({ match }) {
         <div id='talent-cont'>
           <h1>YOU ARE CURRENTLY APPLYING FOR:</h1>
           {/* <h2>{ jobPosts.find(i => i.uri === match.params.id) || 'wtf?' }</h2> */}
-            <h2>"Job Title", at "Company Name"</h2>
+
             <SubmitTalent activator={ ({ setIsOpen }) => (
               <button id='open-dragger' onClick={ () => setIsOpen(true) }>
                 Upload CV
@@ -264,6 +264,9 @@ const OverlayContainer = styled.div`
   }
 
   .submit-form{
+    font-size: 20px;
+    height: 40px;
+    width: 100px;
     border-radius: 10px;
     box-shadow: 6px 6px 12px 0 #A3B1C6, -6px -6px 12px 0  #F6F7F9;
   }

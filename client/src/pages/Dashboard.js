@@ -1,8 +1,8 @@
 import {useState, useEffect} from 'react'
 import styled from 'styled-components'
 import { HiUserCircle } from 'react-icons/hi'
-import { Button, Select, Input, Radio} from 'antd'
-import { PlusOutlined } from '@ant-design/icons'
+import { Button, Select, Input, Radio, Menu, Dropdown} from 'antd'
+import { PlusOutlined, DownOutlined} from '@ant-design/icons'
 import axios from 'axios'
 
 import { Wrapper } from '../styles/style'
@@ -13,16 +13,16 @@ import { Post } from '../components/Post'
 import Talent from './Talent'
 
 function Dashboard() {
+
+  const [value, setValue] = useState(0);
   const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('jwt-token') ? true : false)
-  const [jobPosts, setJobPosts] = useState([])
+  const [jobPosts, setJobPosts] = useState([]);
   const [jobPostsFormData, setJobPostsFormData] = useState({
     title: '',
     tag: '',
     currentRequirement: '',
     requirements: [],
   })
-  // for radio
-  const [value, setValue] = useState(0);
   
   useEffect(() => {
     const jwt = localStorage.getItem('jwt-token')
@@ -41,13 +41,25 @@ function Dashboard() {
     console.log(jobPosts)
   }, [jobPosts])
 
-  const Dashboard = (
+  const dashboard = (
     <Wrapper>
       <HeaderContainer>
         <Logo size="150px"/>
         <div className="user-profile">
-          <HiUserCircle />
-          <span>Admin</span>
+              {/* <HiUserCircle/> */}
+              {/* <span>Admin</span> */}
+          <Menu
+            theme={this.state.theme}
+            onClick={this.handleClick}
+            style={{ width: 256 }}
+            defaultOpenKeys={['sub1']}
+            selectedKeys={[this.state.current]}
+            mode="inline"
+          >
+          <SubMenu key="sub1" icon={<HiUserCircle/>} title="Admin">
+            <Menu.Item danger key="1">Log out</Menu.Item>
+          </SubMenu>
+          </Menu>
         </div>
       </HeaderContainer>
       <DashboardContainer>
@@ -58,7 +70,7 @@ function Dashboard() {
               New Job
             </Button>
           )}>
-            <h1>FORM PLACEHOLDER</h1>
+            {/* <h1>FORM PLACEHOLDER</h1> */}
             <form>
                 <p className="title-form">Title</p>
                 <Input 
@@ -72,7 +84,7 @@ function Dashboard() {
                   mode="tags"
                   allowClear
                   style={{width: '80%'}}
-                  placeholder="Requirements"
+                  placeholder="Add keywords"
                   // defaultValue={[jobPostsFormData.currentRequirement]}
                   // value={jobPostsFormData.currentRequirement}
                   onChange={() => console.log('testing', jobPostsFormData.requirements)}
@@ -98,6 +110,7 @@ function Dashboard() {
                   <Radio value={3}>Design</Radio>
                   {/* <Radio value={4}></Radio> */}
                 </Radio.Group>
+                <Button type="primary">Submit</Button>
             </form>
           </DashboardModal>
         </div>
@@ -122,7 +135,7 @@ function Dashboard() {
 
   return (
     <>
-      {isLoggedIn ? Dashboard : <>not logged in</>}
+      {isLoggedIn ? dashboard : <>not logged in</>}
     </>
   )
 }
@@ -178,9 +191,14 @@ const DashboardContainer = styled.div`
 
     margin-bottom: 25px;
 
+    /* Dropdown > span {
+      font-size: 1.7em;
+      font-weight: 700;
+    } */
+
     > span {
-      font-size: 1.5em;
-      font-weight: 600;
+      font-size: 1.7em;
+      font-weight: 700;
     }
 
     .add-button{

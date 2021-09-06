@@ -32,7 +32,7 @@ function Results({ match }) {
       .catch(err => {
         console.log('unable to fetch data', err)
       })
-  }, [jobPosts])
+  }, [jobPosts, match.params.id])
 
   const isValidId = () => jobPosts.some(i => i.uri === match.params.id)
 
@@ -52,10 +52,20 @@ function Results({ match }) {
           {results.map((val, i) => (
             <div className="screened__posts" key={i}>
               <div className="screened__posts2">
-                <p id="name-post">name: {val.name}</p>
-                <p id="email-post">email: {val.email}</p>
+                <p id="name-post"> {val.name}</p>
+                <p id="email-post"> {val.email}</p>
               </div>
-              <a href={ '../' + val.filehash }download><HiArrowRight/>View CV</a>
+              <div>
+                <HiArrowRight
+                  onClick={ () => {
+                    const jwt = localStorage.getItem('jwt-token')
+                    console.log('WOIE')
+                    axios.get(`/uploads/${val.filehash}`, {headers: {'x-access-token': jwt}})
+                      .then(res => console.log('got file', res))
+                      .catch(err => console.log('unable to get file', err))
+                  }}
+                />View CV
+              </div>
             </div>
           ))}
         </div>
@@ -83,7 +93,7 @@ const ResultScreenedContainer = styled.div`
   }
 
   #name-post{
-    font-size: 1.2em;
+    font-size: 1.7em;
     font-weight: bold;
   }
 

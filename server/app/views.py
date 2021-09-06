@@ -1,4 +1,4 @@
-from flask import request, make_response, send_file
+from flask import request, make_response, send_from_directory
 from functools import wraps
 import jwt
 import datetime
@@ -161,6 +161,6 @@ def talent(id):
 
     return {'message': 'file upload failed'}, 401
 
-@app.route('/uploads/<filename>')
-def uploads(filename):
-    return send_file('../uploads/' + filename + '.pdf', attachment_filename='resume.pdf')
+@app.route('/uploads/<filehash>')
+def uploads(filehash):
+    return send_from_directory('../' + app.config['UPLOAD_PATH'], filehash + '.pdf', as_attachment=True)

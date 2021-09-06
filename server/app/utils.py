@@ -1,5 +1,6 @@
 import hashlib
 import PyPDF2
+import os
 
 def pdf2text(f):
     reader = PyPDF2.PdfFileReader(open(f, 'rb'))
