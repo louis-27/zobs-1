@@ -8,6 +8,11 @@ import Root from './pages/Root'
 import Dashboard from './pages/Dashboard'
 import Login from './pages/Login'
 import Talent from './pages/Talent'
+import Results from './pages/Results'
+
+function Lost() {
+  return <>404 not found</>
+}
 
 function App() {
   const [jwtToken, setJwtToken] = useState('')
@@ -26,7 +31,8 @@ function App() {
         <Route path="/login" exact component={Login} />
         <Route path="/dashboard" exact component={Dashboard} />
         <Route path="/talent/:id" component={Talent} />
-        <Route render={<>404 not found</>} />
+        <Route path="/results/:id" component={Results} />
+        <Route component={Lost} />
         {/* <Route path="/dashboard" render={(props) => {
           <Dashboard {...props} setAuthToken={setAuthToken}/>
         }} /> */}
