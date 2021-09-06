@@ -50,12 +50,11 @@ function Dashboard() {
           <span>Admin</span>
         </div>
       </HeaderContainer>
-
       <DashboardContainer>
         <div className="dashboard__top">
           <span>All Jobs</span>
           <DashboardModal activator={({setIsOpen}) => (
-            <Button type="primary" icon={<PlusOutlined/>} onClick={ () => setIsOpen(true) }>
+            <Button className="add-button" type="primary" icon={<PlusOutlined/>} onClick={ () => setIsOpen(true) }>
               New Job
             </Button>
           )}>
@@ -102,6 +101,9 @@ function Dashboard() {
             </form>
           </DashboardModal>
         </div>
+
+        <br />
+
 
         <div className="dashboard__posts">
             {testink.map(job => (
@@ -180,13 +182,29 @@ const DashboardContainer = styled.div`
       font-size: 1.5em;
       font-weight: 600;
     }
+
+    .add-button{
+      background-color: #E0E5EC;
+      font-weight: bold;
+      color: #1890ff;
+      border: none;
+      border-radius: 10px;
+      box-shadow: 6px 6px 12px 0 #A3B1C6, -6px -6px 12px 0  #F6F7F9;
+
+      :active{
+        box-shadow: inset 3px 3px 8px #A3B1C6,
+                  inset -3px -3px 8px #F6F7F9;
+      }
+    }
   }
 
   .dashboard__posts {
+    border-radius: 20px;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 30px;
+    gap: 40px;
   }
+
 `
 
 export default Dashboard

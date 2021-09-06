@@ -1,4 +1,4 @@
-from flask import request, make_response
+from flask import request, make_response, send_file
 from functools import wraps
 import jwt
 import datetime
@@ -109,13 +109,13 @@ def results(id):
     requirements = [i.skill for i in JobPostsReqs.query.filter_by(job_post_id=job_post_id).all()]
 
     for i in Talent.query.filter_by(job_post_id=job_post_id).all():
-        filename = os.path.join(app.config['UPLOAD_PATH'], i.file_hash)
+        filename = os.path.join(app.config['UPLOAD_PATH'], i.file_hash + '.pdf')
         score = model_rank(filename, requirements)
         res['results'].append({
             'name': i.name,
             'email': i.email,
             'phone': i.phone,
-            'filename': filename,
+            'filehash': i.file_hash,
             'score': score
         })
 
@@ -132,10 +132,10 @@ def talent(id):
         if filename.split('.')[-1] not in app.config['VALID_FILE_EXT']:
             return {'message': 'invalid file extension'}, 401
 
-        # hash file and save file as ../UPLOAD_PATH/hash
+        # hash file and save file as ../UPLOAD_PATH/hash.pdf
         hashed = hash_file(upload)
         upload.seek(0) # move filepointer to start after read()
-        new_filename = os.path.join(app.config['UPLOAD_PATH'], hashed)
+        new_filename = os.path.join(app.config['UPLOAD_PATH'], hashed + '.pdf')
         upload.save(new_filename)
 
         job_post = JobPosts.query.filter_by(uri=id).first()
@@ -161,3 +161,6 @@ def talent(id):
 
     return {'message': 'file upload failed'}, 401
 
+@app.route('/uploads/<filename>')
+def uploads(filename):
+    return send_file('../uploads/' + filename + '.pdf', attachment_filename='resume.pdf')
