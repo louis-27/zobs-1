@@ -7,13 +7,15 @@ const GlobalStyle = createGlobalStyle`
     box-sizing: border-box;
     font-family: 'Inter', sans-serif;
     color: #000;
-    transition: all 1.5s ease;
+    transition: all 0.5s ease;
+    background-color: #E0E5EC;
   }
 `
 
 export const Wrapper = styled.div`
   width: 90%;
   margin: auto;
+  /* background-color: #E0E5EC; */
 `
 
 export default GlobalStyle;

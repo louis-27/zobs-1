@@ -26,11 +26,12 @@ function App() {
         <Route path="/login" exact component={Login} />
         <Route path="/dashboard" exact component={Dashboard} />
         <Route path="/talent/:id" component={Talent} />
+        <Route render={<>404 not found</>} />
         {/* <Route path="/dashboard" render={(props) => {
           <Dashboard {...props} setAuthToken={setAuthToken}/>
         }} /> */}
 
-        {/* <Route path="/talent/:id" component={Posting} />
+        {/* <Route path="/talent/:id" component={Posting} /> */}
         {/* <Route path="/results/:id" component={Result} /> */}
       </Switch>
     </Router>

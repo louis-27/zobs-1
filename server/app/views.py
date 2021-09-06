@@ -6,8 +6,9 @@ import os
 
 from app import app, db
 from app.models import JobPosts, JobPostsReqs, Talent
-from app.get_details import get_details
+# from app.get_details import get_details
 from app.utils import hash_file
+from app.model_rank import model_rank
 
 def login_required(f):
     @wraps(f)
@@ -33,7 +34,6 @@ def root():
 
 @app.route('/login', methods=['POST'])
 def login():
-    print(request)
     username = request.form['username']
     password = request.form['password']
     # auth = request.authorization
@@ -43,8 +43,9 @@ def login():
             'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=24)
         }, app.config['SECRET_KEY'])
         return {'token': token}
-    return make_response('unauthorized access', 401,
-                         {'WWW-Authenticate': 'Basic Realm="Login Required"'})
+    return {'message': 'unable to login'}, 401
+    # return make_response('unauthorized access', 401,
+    #                      {'WWW-Authenticate': 'Basic Realm="Login Required"'})
 
 @app.route('/dashboard')
 @login_required
@@ -74,7 +75,6 @@ def jobpost():
         # add requirements to db
         requirements = data['requirements']
         id = JobPosts.query.order_by(JobPosts.id.desc()).first().id
-        print('TYPE FUCK YOU', type(id))
         for i in requirements:
             new_jobpostreq = JobPostsReqs(job_post_id=id, skill=i)
             db.session.add(new_jobpostreq)
@@ -103,12 +103,30 @@ def jobpost_id(id):
 @app.route('/results/<id>')
 @login_required
 def results(id):
-    pass
+    res = {'results': []}
+    
+    job_post_id = JobPosts.query.filter_by(uri=id).first().id
+    requirements = [i.skill for i in JobPostsReqs.query.filter_by(job_post_id=job_post_id).all()]
+
+    for i in Talent.query.filter_by(job_post_id=job_post_id).all():
+        filename = os.path.join(app.config['UPLOAD_PATH'], i.file_hash)
+        score = model_rank(filename, requirements)
+        res['results'].append({
+            'name': i.name,
+            'email': i.email,
+            'phone': i.phone,
+            'filename': filename,
+            'score': score
+        })
+
+    return res
+
 
 @app.route('/talent/<id>', methods=['POST'])
 @login_required
 def talent(id):
-    upload = request.files['upload']
+    print('WOI ANJING', request.files, request.form)
+    upload = request.files['file']
     filename = upload.filename
     if filename != '':
         if filename.split('.')[-1] not in app.config['VALID_FILE_EXT']:
@@ -128,11 +146,11 @@ def talent(id):
         db.session.commit()
 
         # add talent to db
-        details = get_details(new_filename)
+        # details = get_details(new_filename)
         new_talent = Talent(
-            name=details['name'],
-            email=details['email'],
-            phone=details['phone'],
+            name=request.form['name'],
+            email=request.form['email'],
+            phone=request.form['phone'],
             file_hash=hashed,
             job_post_id=job_post_id
         )

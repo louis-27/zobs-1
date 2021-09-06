@@ -58,13 +58,17 @@ const FormContainer = styled.div`
       box-shadow: 6px 6px 12px 0 #A3B1C6, -6px -6px 12px 0  #F6F7F9;
     }
 
-    #submit-button:hover {
+    #submit-button:active {
       border-radius: 5px;
       background: #E0E5EC;
       box-shadow: inset 3px 3px 8px #A3B1C6,
                   inset -3px -3px 8px #F6F7F9;
     }
     
+    #wrong-creds {
+      color: #DC2626;
+      margin: 5%;
+    }
   }
 `     
 
@@ -73,6 +77,7 @@ const FormContainer = styled.div`
 // form, username and password, method post, '/login'
 function Login() {
   const [formData, setFormData] = useState({username: '', password: ''})
+  const [wrongCreds, setWrongCreds] = useState(false)
   const history = useHistory()
 
   const handleSubmit = e => {
@@ -90,6 +95,9 @@ function Login() {
         history.push('/dashboard')
       })
       .catch(err => {
+        // history.push('/login')
+        setWrongCreds(true)
+        setFormData({username: '', password: ''})
         console.log('unable to log in', err)
       })
   }
@@ -124,6 +132,7 @@ function Login() {
               />
             </div>
             <Button type="default" htmlType="submit" id='submit-button'>Login</Button>
+            {wrongCreds ? <p id='wrong-creds'>Wrong Credentials</p> : null}
           </form>
         </div>
       </FormContainer>

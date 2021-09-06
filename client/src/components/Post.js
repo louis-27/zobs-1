@@ -7,27 +7,26 @@ export function Post({ name, tag, uri, applicants }) {
   const colors = {
     "Business": "#16A34A",
     "Design": "#EA580C",
-    "Tech": "#E11D48"
+    "Tech": "#0169FF"
   };
-
-  const bgColor = colors[tag];
-  console.log()
+  
+  const textColor = colors[tag];
 
   return (
-    <Card type={ bgColor }>
+    <Card type={ textColor }>
       <h1>{ name }</h1>
       <div>
         <FaLink /> <span className="underline">{ uri }</span>
         <a href={'/talent/' + uri}>click this link</a>
       </div>
       <div>
-        <FaTag /> <span>{ tag }</span>
+        <FaTag /> <span>{ tag.charAt(0).toUpperCase() + tag.slice(1) }</span>
       </div>
       <div>
         <FaUser /> <span>Applicants: { applicants }</span>
       </div>
 
-      <ResultsButton>
+      <ResultsButton type={ textColor }>
         See Results <HiArrowNarrowRight />
       </ResultsButton>
     </Card>
@@ -36,28 +35,27 @@ export function Post({ name, tag, uri, applicants }) {
 
 const Card = styled.div`
   position: relative;
-  color: white;
-  background-color: #0169FF;
-  background-color: ${props => props.bgColor};
+  background-color: #E0E5EC;
 
-  /* width: 100%; */
   padding: 20px 15px;
   border-radius: 20px;
+  box-shadow: inset 6px 6px 12px #A3B1C6,
+              inset -6px -6px 12px #F6F7F9;
 
   transition: all 0.2s ease;
   :hover {
-    transform: scale(1.05);
+    box-shadow: 8px 8px 18px 0 #A3B1C6, -8px -8px 18px 0  #F6F7F9;
+    h1 {color: ${props => props.type};}
   }
 
-  h1 {
-    color: white;
+  *:hover {
+    cursor: default;
   }
 
-  .underline {
-    cursor: pointer;
-
+  .underline, a {
     :hover {
       text-decoration: underline;
+      cursor: pointer;
     }
   }
 `
@@ -67,14 +65,13 @@ const ResultsButton = styled.div`
   bottom: 20px;
   right: 15px;
 
-  cursor: pointer;
-
   display: flex;
   align-items: center;
 
   :hover {
     /* text-decoration: underline; */
-    border-bottom: 1px solid white;
+    border-bottom: 1px solid ${props => props.type};
+    cursor: pointer;
   }
 
   svg {

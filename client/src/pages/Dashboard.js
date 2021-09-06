@@ -1,7 +1,7 @@
 import {useState, useEffect} from 'react'
 import styled from 'styled-components'
 import { HiUserCircle } from 'react-icons/hi'
-import { Button } from 'antd'
+import { Button, Select, Input, Radio} from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
 import axios from 'axios'
 
@@ -21,7 +21,9 @@ function Dashboard() {
     currentRequirement: '',
     requirements: [],
   })
-
+  // for radio
+  const [value, setValue] = useState(0);
+  
   useEffect(() => {
     const jwt = localStorage.getItem('jwt-token')
     console.log(jwt)
@@ -59,33 +61,50 @@ function Dashboard() {
           )}>
             <h1>FORM PLACEHOLDER</h1>
             <form>
-              <input type='text' placeholder='title'/>
-              <input id="requirement-input" type='text' placeholder='requirements'
-                // value={ jobPostsFormData.currentRequirement }
-                
-                onKeyDown={ e => {
-                    if(e.code === 'Enter') {
-                      // let inputted = document.getElementById("requirement-input").value
-                      // if(inputted.length > 0){
-                      //   jobPostsFormData.requirements.push(inputted)
-                      //   var element = "<div style=\"background-color: aquamarine;margin-right: 5px;\"><p>" + inputted + "</p></div>"
-                      //   document.getElementById("requirement-input").value = "" 
-                      //   document.getElementById("container-pushing").insertAdjacentHTML('beforeend', element)
-                      // }
+                <p className="title-form">Title</p>
+                <Input 
+                 className="input-form"
+                 placeholder="Title"
+                 style={{width: '80%'}}
+                />
+                <p className="title-form">Requirements</p>
+                <Select
+                  className="input-form"
+                  mode="tags"
+                  allowClear
+                  style={{width: '80%'}}
+                  placeholder="Requirements"
+                  // defaultValue={[jobPostsFormData.currentRequirement]}
+                  // value={jobPostsFormData.currentRequirement}
+                  onChange={() => console.log('testing', jobPostsFormData.requirements)}
+                  onKeyDown={e => {
+                    if(e.code === "Enter"){
+                      const dup = jobPostsFormData.requirements
+                      dup.push(e.target.value)
+                      setJobPostsFormData(prev => ({...prev, requirements: dup, currentRequirement: ''}))
                     }
-                  }
-                } 
-              />
-              {/* <div id="container-pushing" style="display: flex;flex-direction: row;"></div> */}
-              {jobPostsFormData.requirements.map((val, i) => (
-                <button key='i'>{ val }</button>
-              ))}
+                  }}
+                >
+                {jobPostsFormData.requirements.map((val, i) => (
+                  <Select.Option key={i}>{val}</Select.Option>
+                ))}
+                </Select>
+                <p className="title-form">Tags</p>
+                <Radio.Group className="input-form" value={value}
+                  onChange ={ e => {
+                    setValue(e.target.value);
+                  }}>
+                  <Radio value={1}>Business</Radio>
+                  <Radio value={2}>Tech</Radio>
+                  <Radio value={3}>Design</Radio>
+                  {/* <Radio value={4}></Radio> */}
+                </Radio.Group>
             </form>
           </DashboardModal>
         </div>
 
         <div className="dashboard__posts">
-            {jobPosts.map(job => (
+            {testink.map(job => (
               <Post 
                 key={job.uri}
                 name={job.title}
@@ -107,32 +126,26 @@ function Dashboard() {
 }
 
 const testink = [
-  {name: "Back-end Developer", tag: "Tech", applicants: 1209},
-  {name: "Product Manager", tag: "Business", applicants: 856},
-  {name: "Illustrator", tag: "Design", applicants: 744},
-  {name: "Geming Buddy", tag: "Miscellaneous", applicants: 69},
-  {name: "Software Engineer", tag: "Tech", applicants: 6900},
-  {name: "Back-end Developer", tag: "Tech", applicants: 1209},
-  {name: "Product Manager", tag: "Business", applicants: 856},
-  {name: "Illustrator", tag: "Design", applicants: 744},
-  {name: "Geming Buddy", tag: "Miscellaneous", applicants: 69},
-  {name: "Back-end Developer", tag: "Tech", applicants: 1209},
-  {name: "Product Manager", tag: "Business", applicants: 856},
-  {name: "Illustrator", tag: "Design", applicants: 744},
-  {name: "Geming Buddy", tag: "Miscellaneous", applicants: 69},
-  {name: "Back-end Developer", tag: "Tech", applicants: 1209},
-  {name: "Product Manager", tag: "Business", applicants: 856},
-  {name: "Illustrator", tag: "Design", applicants: 744},
-  {name: "Geming Buddy", tag: "Miscellaneous", applicants: 69},
-  {name: "Software Engineer", tag: "Tech", applicants: 6900},
-  {name: "Back-end Developer", tag: "Tech", applicants: 1209},
-  {name: "Product Manager", tag: "Business", applicants: 856},
-  {name: "Illustrator", tag: "Design", applicants: 744},
-  {name: "Geming Buddy", tag: "Miscellaneous", applicants: 69},
-  {name: "Back-end Developer", tag: "Tech", applicants: 1209},
-  {name: "Product Manager", tag: "Business", applicants: 856},
-  {name: "Illustrator", tag: "Design", applicants: 744},
-  {name: "Geming Buddy", tag: "Miscellaneous", applicants: 69}
+  {title: "Back-end Developer", tag: "Tech", applicants: 1209},
+  {title: "Product Manager", tag: "Business", applicants: 856},
+  {title: "Illustrator", tag: "Design", applicants: 744},
+  {title: "Software Engineer", tag: "Tech", applicants: 6900},
+  {title: "Back-end Developer", tag: "Tech", applicants: 1209},
+  {title: "Product Manager", tag: "Business", applicants: 856},
+  {title: "Illustrator", tag: "Design", applicants: 744},
+  {title: "Back-end Developer", tag: "Tech", applicants: 1209},
+  {title: "Product Manager", tag: "Business", applicants: 856},
+  {title: "Illustrator", tag: "Design", applicants: 744},
+  {title: "Back-end Developer", tag: "Tech", applicants: 1209},
+  {title: "Product Manager", tag: "Business", applicants: 856},
+  {title: "Illustrator", tag: "Design", applicants: 744},
+  {title: "Software Engineer", tag: "Tech", applicants: 6900},
+  {title: "Back-end Developer", tag: "Tech", applicants: 1209},
+  {title: "Product Manager", tag: "Business", applicants: 856},
+  {title: "Illustrator", tag: "Design", applicants: 744},
+  {title: "Back-end Developer", tag: "Tech", applicants: 1209},
+  {title: "Product Manager", tag: "Business", applicants: 856},
+  {title: "Illustrator", tag: "Design", applicants: 744},
 ]
 
 const HeaderContainer = styled.div`
@@ -155,6 +168,8 @@ const HeaderContainer = styled.div`
 `
 
 const DashboardContainer = styled.div`
+  padding-bottom: 50px;
+
   .dashboard__top {
     display: flex;
     justify-content: space-between;
@@ -169,10 +184,8 @@ const DashboardContainer = styled.div`
 
   .dashboard__posts {
     display: grid;
-    /* grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); */
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    /* grid-template-columns: repeat(auto-fit, 350px); */
-    gap: 15px;
+    gap: 30px;
   }
 `
 
