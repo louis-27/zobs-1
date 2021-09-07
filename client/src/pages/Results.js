@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import styled from 'styled-components'
-import { Radio } from 'antd'
+import { Button, Select, Input, Radio, Menu, Dropdown, Form } from 'antd'
 
 import { Wrapper } from '../styles/style'
 import Header from '../components/Header'
 import { HiUserCircle, HiArrowRight } from 'react-icons/hi'
 import { Logo } from '../components/Logo/Logo'
+
+const { SubMenu } = Menu;
 
 function Results({ match }) {
   const [jobPosts, setJobPosts] = useState([])
@@ -48,8 +50,21 @@ function Results({ match }) {
       <HeaderContainer>
         <Logo size="150px"/>
         <div className="user-profile">
-          <HiUserCircle />
-          <span>Admin</span>
+        <Menu
+            style={{ width: 256 }}
+            mode="inline"
+          >
+          <SubMenu id="dropdown-admin" style={{position: 'absolute'}, {fontSize: "20px"}}key="sub1" icon={<HiUserCircle/>} title="Admin">
+            <Menu.Item
+              id="dropdown-logout"
+              style={{ width: '100%' }, {position: 'absolute'}}
+              key="1"
+              onClick={() => localStorage.removeItem('jwt-token')}
+            >
+              <a href="../login">Log out</a>
+            </Menu.Item>
+          </SubMenu>
+          </Menu>
         </div>
       </HeaderContainer>
       <ResultScreenedContainer>
@@ -88,10 +103,12 @@ function Results({ match }) {
 function ResultPost({ k, name, email, filehash, rank }) {
   return (
     <div className="screened__posts" key={k}>
-      {rank != null ? <h1>#{rank}</h1> : null}
-      <div className="screened__posts2">
-        <p id="name-post"> {name}</p>
-        <p id="email-post"> {email}</p>
+      <div style={{display: 'flex'}}>
+        {rank != null ? <h1 style={{marginRight: '10px'}}>#{rank}</h1> : null}
+        <div className="screened__posts2">
+          <p id="name-post"> {name}</p>
+          <p id="email-post"> {email}</p>
+        </div>
       </div>
       <div id='view-file'
         onClick={ () => {
@@ -166,6 +183,17 @@ const ResultScreenedContainer = styled.div`
     text-decoration: underline;
   }
 
+  .ant-radio-button-wrapper {
+    border-radius: 20px;
+  }
+
+  .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled)::before{
+    display: none;
+  }
+
+  .ant-radio-button-wrapper:not(:first-child)::before{
+    display: none;
+  }
 `
 
 const HeaderContainer = styled.div`
@@ -180,9 +208,24 @@ const HeaderContainer = styled.div`
     display: flex;
     align-items: center;
     font-size: 1.6em;
+    background-color: #E0E5EC;
 
     svg {
       font-size: 1.5em;
+    }
+    
+    animation: none;
+
+    ul{
+      background-color: #E0E5EC;
+      border: none;
+
+      li{
+        border-radius: 20px;
+        background-color: #E0E5EC;
+        box-shadow: 6px 6px 12px 0 #A3B1C6, -6px -6px 12px 0  #F6F7F9;
+        width: 250px;
+      }
     }
   }
 `

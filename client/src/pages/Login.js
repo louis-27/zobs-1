@@ -32,7 +32,7 @@ const FormContainer = styled.div`
       }
       
       input{
-        border-radius: 5px; 
+        border-radius: 10px; 
         padding: 5px 10px;
         border: none;
         background-color: #E0E5EC;

@@ -74,6 +74,25 @@ const OverlayContainer = styled.div`
     box-shadow: inset 3px 3px 6px #A3B1C6,
                 inset -3px -3px 6px #F6F7F9;
   }
+
+  .ant-select-selector {
+    background-color: #E0E5EC;
+    border: none;
+    border-radius: 5px;
+    box-shadow: inset 3px 3px 6px #A3B1C6,
+                inset -3px -3px 6px #F6F7F9;
+  }
+
+  .ant-select:not(.ant-select-customize-input) .ant-select-selector {
+    background-color: #E0E5EC;
+    border-radius: 5px;
+  }
+
+  .ant-radio-inner {
+    background-color: #E0E5EC;
+    box-shadow: inset 3px 3px 6px #A3B1C6,
+                inset -3px -3px 6px #F6F7F9;
+  }
 `
 
 function DashboardModal({ activator, children}) {

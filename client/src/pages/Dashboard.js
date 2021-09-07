@@ -91,7 +91,7 @@ function Dashboard() {
       </HeaderContainer>
       <DashboardContainer>
         <div className="dashboard__top">
-          <span>All Jobs</span>
+          <span id="all-title" >All Jobs</span>
           <DashboardModal activator={({setIsOpen}) => (
             <Button className="add-button" type="primary" icon={<PlusOutlined/>} onClick={ () => setIsOpen(true) }>
               New Job
@@ -139,9 +139,9 @@ function Dashboard() {
                   onChange ={ e => {
                     setValue(e.target.value);
                   }}>
-                  <Radio value={0}>Business</Radio>
-                  <Radio value={1}>Tech</Radio>
-                  <Radio value={2}>Design</Radio>
+                  <Radio className="radio-input" value={0}>Business</Radio>
+                  <Radio className="radio-input" value={1}>Tech</Radio>
+                  <Radio className="radio-input" value={2}>Design</Radio>
                 </Radio.Group>
               </Form.Item>
 
@@ -267,6 +267,10 @@ const DashboardContainer = styled.div`
     gap: 40px;
   }
 
+  #all-title {
+    font-weight: bold;
+    font-size: 20px;
+  }
 `
 
 export default Dashboard

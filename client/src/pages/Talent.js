@@ -298,6 +298,10 @@ const OverlayContainer = styled.div`
     }
   }
 
+  .ant-form-item .ant-upload.ant-upload-drag {
+    background-color: #E0E5EC;
+  }
+
   `
 
 export default Talent

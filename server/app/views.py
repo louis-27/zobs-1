@@ -99,6 +99,7 @@ def jobpost_id(id):
     job_post_id = JobPosts.query.filter_by(uri=id).first().id
     job_posts = JobPosts.query.filter_by(uri=id).delete()
     job_posts_reqs = JobPostsReqs.query.filter_by(job_post_id=job_post_id).delete()
+    talents = Talents.query.filter_by(job_post_id=job_post_id).delete()
     db.session.commit()
     return {'message': 'job post successfully deleted'}
 
