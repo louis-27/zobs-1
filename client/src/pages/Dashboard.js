@@ -77,7 +77,14 @@ function Dashboard() {
             mode="inline"
           >
           <SubMenu id="dropdown-admin" style={{position: 'absolute'}, {fontSize: "20px"}}key="sub1" icon={<HiUserCircle/>} title="Admin">
-            <Menu.Item id="dropdown-logout" style={{ width: '100%' }, {position: 'absolute'}} key="1"><a href="../login">Log out</a></Menu.Item>
+            <Menu.Item
+              id="dropdown-logout"
+              style={{ width: '100%' }, {position: 'absolute'}}
+              key="1"
+              onClick={() => localStorage.removeItem('jwt-token')}
+            >
+              <a href="../login">Log out</a>
+            </Menu.Item>
           </SubMenu>
           </Menu>
         </div>
