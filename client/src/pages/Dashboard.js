@@ -1,9 +1,10 @@
 import {useState, useEffect} from 'react'
 import styled from 'styled-components'
 import { HiUserCircle } from 'react-icons/hi'
-import { Button, Select, Input, Radio, Menu, Dropdown} from 'antd'
+import { Button, Select, Input, Radio, Menu, Dropdown, Form } from 'antd'
 import { PlusOutlined, DownOutlined} from '@ant-design/icons'
 import axios from 'axios'
+import { v4 as uuidv4 } from 'uuid'
 
 import { Wrapper } from '../styles/style'
 import Header from '../components/Header'
@@ -41,23 +42,42 @@ function Dashboard() {
     console.log(jobPosts)
   }, [jobPosts])
 
+  const handleSubmit = (values) => {
+    const tags = ['Business', 'Tech', 'Design']
+
+    const jwt = localStorage.getItem('jwt-token')
+    let body = new FormData()
+    body.append('title', values.title)
+    body.append('tag', tags[values.tag])
+    body.append('requirements', values.requirements)
+    body.append('uri', uuidv4())
+
+    axios.post('/jobpost', body, {headers: {'x-access-token': jwt}})
+      .then(res => {
+        console.log('submit successfull', res)
+        window.location.reload()
+      })
+      .catch(err => {
+        console.log('unable to submit job post', err)
+        window.location.reload()
+      })
+  }
+
+  const { SubMenu } = Menu;
+
   const dashboard = (
     <Wrapper>
       <HeaderContainer>
-        <Logo size="150px"/>
+        <a href='/'><Logo size="150px"/></a>
         <div className="user-profile">
               {/* <HiUserCircle/> */}
               {/* <span>Admin</span> */}
           <Menu
-            theme={this.state.theme}
-            onClick={this.handleClick}
             style={{ width: 256 }}
-            defaultOpenKeys={['sub1']}
-            selectedKeys={[this.state.current]}
             mode="inline"
           >
-          <SubMenu key="sub1" icon={<HiUserCircle/>} title="Admin">
-            <Menu.Item danger key="1">Log out</Menu.Item>
+          <SubMenu id="dropdown-admin" style={{position: 'absolute'}, {fontSize: "20px"}}key="sub1" icon={<HiUserCircle/>} title="Admin">
+            <Menu.Item id="dropdown-logout" style={{ width: '100%' }, {position: 'absolute'}} key="1"><a href="../login">Log out</a></Menu.Item>
           </SubMenu>
           </Menu>
         </div>
@@ -70,15 +90,19 @@ function Dashboard() {
               New Job
             </Button>
           )}>
-            {/* <h1>FORM PLACEHOLDER</h1> */}
-            <form>
-                <p className="title-form">Title</p>
+            <Form onFinish={ handleSubmit }>
+              <p className="title-form">Title</p>
+              <Form.Item name='title' required>
                 <Input 
                  className="input-form"
+                 id="text-input"
                  placeholder="Title"
                  style={{width: '80%'}}
                 />
-                <p className="title-form">Requirements</p>
+              </Form.Item>
+
+              <p className="title-form">Requirements</p>
+              <Form.Item name='requirements'>
                 <Select
                   className="input-form"
                   mode="tags"
@@ -96,22 +120,28 @@ function Dashboard() {
                     }
                   }}
                 >
-                {jobPostsFormData.requirements.map((val, i) => (
-                  <Select.Option key={i}>{val}</Select.Option>
-                ))}
+                  {jobPostsFormData.requirements.map((val, i) => (
+                    <Select.Option key={i}>{val}</Select.Option>
+                  ))}
                 </Select>
-                <p className="title-form">Tags</p>
+              </Form.Item>
+
+              <p className="title-form">Tags</p>
+              <Form.Item name='tag'>
                 <Radio.Group className="input-form" value={value}
                   onChange ={ e => {
                     setValue(e.target.value);
                   }}>
-                  <Radio value={1}>Business</Radio>
-                  <Radio value={2}>Tech</Radio>
-                  <Radio value={3}>Design</Radio>
-                  {/* <Radio value={4}></Radio> */}
+                  <Radio value={0}>Business</Radio>
+                  <Radio value={1}>Tech</Radio>
+                  <Radio value={2}>Design</Radio>
                 </Radio.Group>
-                <Button type="primary">Submit</Button>
-            </form>
+              </Form.Item>
+
+              <Form.Item>
+                <Button style={{ borderRadius: '10px', backgroundColor: '#E0E5EC' }} type="submit" htmlType="submit">Submit</Button>
+              </Form.Item>
+            </Form>
           </DashboardModal>
         </div>
 
@@ -119,7 +149,7 @@ function Dashboard() {
 
 
         <div className="dashboard__posts">
-            {testink.map(job => (
+            {jobPosts.map(job => (
               <Post 
                 key={job.uri}
                 name={job.title}
@@ -175,11 +205,28 @@ const HeaderContainer = styled.div`
     display: flex;
     align-items: center;
     font-size: 1.6em;
+    background-color: #E0E5EC;
 
     svg {
       font-size: 1.5em;
     }
+    
+    animation: none;
+
+    ul{
+      background-color: #E0E5EC;
+      border: none;
+
+      li{
+        border-radius: 20px;
+        background-color: #E0E5EC;
+        box-shadow: 6px 6px 12px 0 #A3B1C6, -6px -6px 12px 0  #F6F7F9;
+        width: 250px;
+      }
+    }
   }
+
+  
 `
 
 const DashboardContainer = styled.div`
@@ -190,16 +237,6 @@ const DashboardContainer = styled.div`
     justify-content: space-between;
 
     margin-bottom: 25px;
-
-    /* Dropdown > span {
-      font-size: 1.7em;
-      font-weight: 700;
-    } */
-
-    > span {
-      font-size: 1.7em;
-      font-weight: 700;
-    }
 
     .add-button{
       background-color: #E0E5EC;

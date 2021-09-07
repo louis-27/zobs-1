@@ -66,6 +66,14 @@ const OverlayContainer = styled.div`
     margin-bottom: 0px;
     margin-top: 10px;
   }
+
+  #text-input {
+    background-color: #E0E5EC;
+    border: none;
+    border-radius: 5px;
+    box-shadow: inset 3px 3px 6px #A3B1C6,
+                inset -3px -3px 6px #F6F7F9;
+  }
 `
 
 function DashboardModal({ activator, children}) {

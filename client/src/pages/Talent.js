@@ -9,6 +9,7 @@ import Header from '../components/Header';
 
 function Talent({ match }) {
   const [jobPosts, setJobPosts] = useState([])
+  const history = useHistory()
 
   useEffect(() => {
     const jwt = localStorage.getItem('jwt-token')
@@ -54,17 +55,16 @@ function Talent({ match }) {
     body.append('email', values.email)
     body.append('phone', values.phone)
     body.append('file', values.file.file.originFileObj)
-    // console.log('PANTEK', values.file.file.originFileObj)
-    // console.log(`/talent/${match.params.id}`)
 
     axios.post(`/talent/${match.params.id}`, body, {headers: {'x-access-token': jwt, 'Content-Type': 'multipart/form-data'}})
       .then(res => {
         console.log('upload successful', res)
+        window.location.reload()
       })
       .catch(err => {
         console.log('unable to submit form', err)
+        window.location.reload()
       })
-    console.log(values)
   }
 
   // Form Layout
@@ -85,7 +85,10 @@ function Talent({ match }) {
       <Header/>
         <div id='talent-cont'>
           <h1>YOU ARE CURRENTLY APPLYING FOR:</h1>
-          {/* <h2>{ jobPosts.find(i => i.uri === match.params.id) || 'wtf?' }</h2> */}
+          {jobPosts.map((e, i) => {
+            if (e.uri === match.params.id) return <h2 key={i}>{e.title}</h2>
+            return null
+          })}
 
             <SubmitTalent activator={ ({ setIsOpen }) => (
               <button id='open-dragger' onClick={ () => setIsOpen(true) }>
@@ -207,7 +210,7 @@ const TalentContainer = styled.div`
 
   h1 {
     color: #2563EB;
-    font-size: 50px;
+    font-size: 2.5em;
     font-weight: bold;
     margin-bottom: 0;
     text-align: center;

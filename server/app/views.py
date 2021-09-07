@@ -65,17 +65,17 @@ def dashboard():
 def jobpost():
     # handle post req
     if request.method == 'POST':
-        data = request.get_json()
+        data = request.form
 
         # add job post to db
-        new_jobpost = JobPosts(title=data['title'], uri=data['uri'], applicants=0)
+        new_jobpost = JobPosts(title=data['title'], tag=data['tag'], uri=data['uri'], applicants=0)
         db.session.add(new_jobpost)
         db.session.commit()
 
         # add requirements to db
         requirements = data['requirements']
         id = JobPosts.query.order_by(JobPosts.id.desc()).first().id
-        for i in requirements:
+        for i in requirements.split(','):
             new_jobpostreq = JobPostsReqs(job_post_id=id, skill=i)
             db.session.add(new_jobpostreq)
             db.session.commit()
@@ -93,10 +93,12 @@ def jobpost():
         })
     return response
 
-@app.route('/jobpost/<id>', methods=['DEL'])
+@app.route('/jobpost/<id>', methods=['DELETE'])
 @login_required
 def jobpost_id(id):
-    job_post = JobPosts.query.filter_by(uri=id).delete()
+    job_post_id = JobPosts.query.filter_by(uri=id).first().id
+    job_posts = JobPosts.query.filter_by(uri=id).delete()
+    job_posts_reqs = JobPostsReqs.query.filter_by(job_post_id=job_post_id).delete()
     db.session.commit()
     return {'message': 'job post successfully deleted'}
 
@@ -104,7 +106,7 @@ def jobpost_id(id):
 @login_required
 def results(id):
     res = {'results': []}
-    
+
     job_post_id = JobPosts.query.filter_by(uri=id).first().id
     requirements = [i.skill for i in JobPostsReqs.query.filter_by(job_post_id=job_post_id).all()]
 

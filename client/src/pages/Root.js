@@ -1,5 +1,7 @@
+import Header from '../components/Header';
+
 function Root() {
-  return <>root</>
+  return <Header />
 }
 
 export default Root

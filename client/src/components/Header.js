@@ -15,8 +15,10 @@ const HeaderContainer = styled.div`
 function Header() {
   return (
     <HeaderContainer>
-      <Logo size="250px"/>
-      <p>One-click away from landing your dream job</p>
+      <a href='/'>
+        <Logo size="250px"/>
+        <p>One-click away from landing your dream job</p>
+      </a>
     </HeaderContainer>
   )
 }

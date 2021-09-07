@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import styled from 'styled-components'
+import { Radio } from 'antd'
+
 import { Wrapper } from '../styles/style'
 import Header from '../components/Header'
 import { HiUserCircle, HiArrowRight } from 'react-icons/hi'
@@ -9,6 +11,7 @@ import { Logo } from '../components/Logo/Logo'
 function Results({ match }) {
   const [jobPosts, setJobPosts] = useState([])
   const [results, setResults] = useState([])
+  const [isRanked, setIsRanked] = useState(false)
 
   useEffect(() => {
     const jwt = localStorage.getItem('jwt-token')
@@ -27,7 +30,10 @@ function Results({ match }) {
     axios.get(`/results/${match.params.id}`, {headers: {'x-access-token': jwt}})
       .then(res => {
         console.log('should get data here', res.data)
-        setResults(res.data.results)
+        const len = res.data.results.length
+        const screened = Math.floor(len / 10)
+        const minLen = len > 15 ? 15 : len
+        setResults(res.data.results.slice(0, minLen))
       })
       .catch(err => {
         console.log('unable to fetch data', err)
@@ -47,27 +53,25 @@ function Results({ match }) {
         </div>
       </HeaderContainer>
       <ResultScreenedContainer>
-        <h1>&#60;jobtitle&#62;</h1>
+        { jobPosts.map((e, i) => {
+          console.log(results)
+          if (e.uri === match.params.id) return <h1 key={i}>{ e.title }</h1>
+          return null
+        }) }
+        <Radio.Group defaultValue='a' size='large' onChange={ () => setIsRanked(!isRanked) }>
+          <Radio.Button className='radio-selector' value='a'>Screened</Radio.Button>
+          <Radio.Button className='radio-selector' value='b'>Ranked</Radio.Button>
+        </Radio.Group>
+
         <div id="post-container">
-          {results.map((val, i) => (
-            <div className="screened__posts" key={i}>
-              <div className="screened__posts2">
-                <p id="name-post"> {val.name}</p>
-                <p id="email-post"> {val.email}</p>
-              </div>
-              <div>
-                <HiArrowRight
-                  onClick={ () => {
-                    const jwt = localStorage.getItem('jwt-token')
-                    console.log('WOIE')
-                    axios.get(`/uploads/${val.filehash}`, {headers: {'x-access-token': jwt}})
-                      .then(res => console.log('got file', res))
-                      .catch(err => console.log('unable to get file', err))
-                  }}
-                />View CV
-              </div>
-            </div>
-          ))}
+          { isRanked 
+            ? [...results].sort((a, b) => b.score > a.score).map((val, i) => (
+                <ResultPost k={i} name={val.name} email={val.email} filehash={val.filehash} rank={i}/>
+              ))
+            : results.map((val, i) => (
+                <ResultPost k={i} name={val.name} email={val.email} filehash={val.filehash}/>
+              ))
+          }
         </div>
       </ResultScreenedContainer>
     </Wrapper>
@@ -81,8 +85,44 @@ function Results({ match }) {
   )
 }
 
-const ResultScreenedContainer = styled.div`
+function ResultPost({ k, name, email, filehash, rank }) {
+  return (
+    <div className="screened__posts" key={k}>
+      {rank != null ? <h1>#{rank}</h1> : null}
+      <div className="screened__posts2">
+        <p id="name-post"> {name}</p>
+        <p id="email-post"> {email}</p>
+      </div>
+      <div id='view-file'
+        onClick={ () => {
+          const jwt = localStorage.getItem('jwt-token')
+          axios.get('/uploads/' + filehash, {
+            responseType: 'blob',
+            headers: {
+              'x-access-token': jwt,
+              Accept: 'application/octet-stream',
+            },
+          })
+            .then(res => {
+              const bob = res.data
+              const link = document.createElement('a')
+              link.href = window.URL.createObjectURL(bob)
+              link.download = 'resume.pdf'
+              link.click()
+            })
+            .catch(err => console.log('unable to get file', err))
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <HiArrowRight/>View CV
+        </div>
+      </div>
+    </div>
+  )
+}
 
+const ResultScreenedContainer = styled.div`
+  margin-bottom: 5%;
   #post-container{
     padding-top: 15px;
     display: grid;
@@ -112,6 +152,18 @@ const ResultScreenedContainer = styled.div`
     :hover{
       box-shadow: 8px 8px 18px 0 #A3B1C6, -8px -8px 18px 0  #F6F7F9;
     }
+  }
+  
+  .radio-selector {
+    background-color: #E0E5EC;
+    margin: 20px 20px 20px 0px;
+    box-shadow: 6px 6px 12px 0 #A3B1C6, -6px -6px 12px 0  #F6F7F9;
+    border: none;
+  }
+
+  #view-file:hover {
+    cursor: pointer;
+    text-decoration: underline;
   }
 
 `

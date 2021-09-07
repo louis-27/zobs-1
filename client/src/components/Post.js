@@ -1,7 +1,8 @@
 import { PropertySafetyFilled } from '@ant-design/icons';
-import { FaLink, FaTag, FaUser } from 'react-icons/fa'
+import { FaLink, FaTag, FaUser, FaTrash } from 'react-icons/fa'
 import { HiArrowNarrowRight } from 'react-icons/hi'
 import styled from 'styled-components'
+import axios from 'axios'
 
 export function Post({ name, tag, uri, applicants }) {
   const colors = {
@@ -16,8 +17,8 @@ export function Post({ name, tag, uri, applicants }) {
     <Card type={ textColor }>
       <h1>{ name }</h1>
       <div>
-        <FaLink /> <span className="underline">{ uri }</span>
-        <a href={'/talent/' + uri}>click this link</a>
+        <FaLink /> <span className="underline"><a href={ '/talent/' + uri }>{ '/talent/' + uri }</a></span>
+        {/* <a href={'/talent/' + uri}>click this link</a> */}
       </div>
       <div>
         <FaTag /> <span>{ tag.charAt(0).toUpperCase() + tag.slice(1) }</span>
@@ -26,8 +27,23 @@ export function Post({ name, tag, uri, applicants }) {
         <FaUser /> <span>Applicants: { applicants }</span>
       </div>
 
+      <FaTrash id='trash' onClick={ () => {
+        const jwt = localStorage.getItem('jwt-token')
+        axios.delete('/jobpost/' + uri, {headers: {'x-access-token': jwt}})
+          .then(res => {
+            console.log('deleted item', res)
+            window.location.reload()
+          })
+          .catch(res => {
+            console.log('can not delete item', res)
+            window.location.reload()
+          })
+      } }/>
+
       <ResultsButton type={ textColor }>
-        See Results <HiArrowNarrowRight />
+        <a href={'/results/' + uri}>
+          See Results <HiArrowNarrowRight />
+        </a>
       </ResultsButton>
     </Card>
   );
@@ -54,10 +70,20 @@ const Card = styled.div`
 
   .underline, a {
     :hover {
-      text-decoration: underline;
       cursor: pointer;
     }
   }
+
+  #trash {
+    position: absolute;
+    top: 20px;
+    right: 15px;
+  }
+
+  #trash:hover {
+    cursor: pointer;
+  }
+  
 `
 
 const ResultsButton = styled.div`
