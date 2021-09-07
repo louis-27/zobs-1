@@ -1,17 +1,15 @@
 import {useState, useEffect} from 'react'
 import styled from 'styled-components'
 import { HiUserCircle } from 'react-icons/hi'
-import { Button, Select, Input, Radio, Menu, Dropdown, Form } from 'antd'
-import { PlusOutlined, DownOutlined} from '@ant-design/icons'
+import { Button, Select, Input, Radio, Menu, Form } from 'antd'
+import { PlusOutlined } from '@ant-design/icons'
 import axios from 'axios'
 import { v4 as uuidv4 } from 'uuid'
 
 import { Wrapper } from '../styles/style'
-import Header from '../components/Header'
 import { Logo } from '../components/Logo/Logo'
 import DashboardModal from '../components/DashboardModal'
 import { Post } from '../components/Post'
-import Talent from './Talent'
 
 function Dashboard() {
 
@@ -76,10 +74,10 @@ function Dashboard() {
             style={{ width: 256 }}
             mode="inline"
           >
-          <SubMenu id="dropdown-admin" style={{position: 'absolute'}, {fontSize: "20px"}}key="sub1" icon={<HiUserCircle/>} title="Admin">
+          <SubMenu id="dropdown-admin" style={{position: 'absolute', fontSize: "20px"}} key="sub1" icon={<HiUserCircle/>} title="Admin">
             <Menu.Item
               id="dropdown-logout"
-              style={{ width: '100%' }, {position: 'absolute'}}
+              style={{ width: '100%', position: 'absolute'}}
               key="1"
               onClick={() => localStorage.removeItem('jwt-token')}
             >
@@ -177,29 +175,6 @@ function Dashboard() {
   )
 }
 
-const testink = [
-  {title: "Back-end Developer", tag: "Tech", applicants: 1209},
-  {title: "Product Manager", tag: "Business", applicants: 856},
-  {title: "Illustrator", tag: "Design", applicants: 744},
-  {title: "Software Engineer", tag: "Tech", applicants: 6900},
-  {title: "Back-end Developer", tag: "Tech", applicants: 1209},
-  {title: "Product Manager", tag: "Business", applicants: 856},
-  {title: "Illustrator", tag: "Design", applicants: 744},
-  {title: "Back-end Developer", tag: "Tech", applicants: 1209},
-  {title: "Product Manager", tag: "Business", applicants: 856},
-  {title: "Illustrator", tag: "Design", applicants: 744},
-  {title: "Back-end Developer", tag: "Tech", applicants: 1209},
-  {title: "Product Manager", tag: "Business", applicants: 856},
-  {title: "Illustrator", tag: "Design", applicants: 744},
-  {title: "Software Engineer", tag: "Tech", applicants: 6900},
-  {title: "Back-end Developer", tag: "Tech", applicants: 1209},
-  {title: "Product Manager", tag: "Business", applicants: 856},
-  {title: "Illustrator", tag: "Design", applicants: 744},
-  {title: "Back-end Developer", tag: "Tech", applicants: 1209},
-  {title: "Product Manager", tag: "Business", applicants: 856},
-  {title: "Illustrator", tag: "Design", applicants: 744},
-]
-
 const HeaderContainer = styled.div`
   display: flex;
   justify-content: space-between;
@@ -232,8 +207,6 @@ const HeaderContainer = styled.div`
       }
     }
   }
-
-  
 `
 
 const DashboardContainer = styled.div`

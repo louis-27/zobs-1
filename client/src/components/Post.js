@@ -1,4 +1,3 @@
-import { PropertySafetyFilled } from '@ant-design/icons';
 import { FaLink, FaTag, FaUser, FaTrash } from 'react-icons/fa'
 import { HiArrowNarrowRight } from 'react-icons/hi'
 import styled from 'styled-components'

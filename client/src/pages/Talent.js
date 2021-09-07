@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import ReactDom from 'react-dom'
-import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import axios from 'axios'
 import { Button, Form, Upload, message, Input } from 'antd';
@@ -9,7 +8,6 @@ import Header from '../components/Header';
 
 function Talent({ match }) {
   const [jobPosts, setJobPosts] = useState([])
-  const history = useHistory()
 
   useEffect(() => {
     const jwt = localStorage.getItem('jwt-token')

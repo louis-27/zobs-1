@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import styled from 'styled-components'
-import { Button, Select, Input, Radio, Menu, Dropdown, Form } from 'antd'
+import { Radio, Menu } from 'antd'
 
 import { Wrapper } from '../styles/style'
-import Header from '../components/Header'
 import { HiUserCircle, HiArrowRight } from 'react-icons/hi'
 import { Logo } from '../components/Logo/Logo'
 
@@ -34,7 +33,7 @@ function Results({ match }) {
         console.log('should get data here', res.data)
         const len = res.data.results.length
         const screened = Math.floor(len / 10)
-        const minLen = len > 15 ? 15 : len
+        const minLen = len < 15 ? len : screened < 15 ? 15 : screened
         setResults(res.data.results.slice(0, minLen))
       })
       .catch(err => {
@@ -54,10 +53,10 @@ function Results({ match }) {
             style={{ width: 256 }}
             mode="inline"
           >
-          <SubMenu id="dropdown-admin" style={{position: 'absolute'}, {fontSize: "20px"}}key="sub1" icon={<HiUserCircle/>} title="Admin">
+          <SubMenu id="dropdown-admin" style={{position: 'absolute', fontSize: "20px"}}key="sub1" icon={<HiUserCircle/>} title="Admin">
             <Menu.Item
               id="dropdown-logout"
-              style={{ width: '100%' }, {position: 'absolute'}}
+              style={{ width: '100%', position: 'absolute'}}
               key="1"
               onClick={() => localStorage.removeItem('jwt-token')}
             >

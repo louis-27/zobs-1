@@ -1,6 +1,4 @@
-import { useState, useEffect } from 'react'
 import { Route, BrowserRouter as Router, Switch } from 'react-router-dom'
-import axios from 'axios'
 
 import './App.css'
 import GlobalStyle from './styles/style'
@@ -21,13 +19,6 @@ function Lost() {
 }
 
 function App() {
-  const [jwtToken, setJwtToken] = useState('')
-
-  useEffect(() => {
-    const storedJwt = localStorage.getItem('jwt-token')
-    if (storedJwt) setJwtToken(storedJwt)
-  }, [])
-
   return (
     <Router>
       <GlobalStyle />
