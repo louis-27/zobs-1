@@ -79,7 +79,7 @@ function Results({ match }) {
 
         <div id="post-container">
           { isRanked 
-            ? [...results].sort((a, b) => b.score > a.score).map((val, i) => (
+            ? [...results].sort((a, b) => b.score - a.score).map((val, i) => (
                 <ResultPost k={i} name={val.name} email={val.email} filehash={val.filehash} rank={i}/>
               ))
             : results.map((val, i) => (
